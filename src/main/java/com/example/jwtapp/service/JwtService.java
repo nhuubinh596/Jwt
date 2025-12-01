@@ -1,5 +1,6 @@
 package com.example.jwtapp.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -42,5 +43,23 @@ public class JwtService {
                 .signWith(this.getSigningKey(), SignatureAlgorithm.ES256)
                 // Nén và tạo key
                 .compact();
+    }
+
+    // Xư lí body:
+    public Claims getBody(String token) {
+        return Jwts.parserBuilder()
+                // Cung cấp khóa bí mật
+                .setSigningKey(this.getSigningKey())
+                // Tạo đối tượng parser
+                .build()
+                // Phân tích Jwt
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    // Kiêm tra tính hợp lệ của token sinh ra
+    public Boolean validate(Claims claims){
+        // So sánh thời gian hết hạn cua token với thời gian hiện tại
+        return claims.getExpiration().after(new Date());
     }
 }
